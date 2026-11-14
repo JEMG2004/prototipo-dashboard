@@ -1,0 +1,344 @@
+# Reglas de negocio del prototipo: TODAS son supuestos y hay que revisarlas con
+# el coordinador (PT 1.2). Son hipótesis, como dijo Néstor: "no tiene que ser real".
+#
+# Dos tipos:
+#   relacion  -> cómo se genera una variable a partir de otras (lo que el prompt
+#                describe como "relaciones" y lo que el generador simulado imita).
+#   desercion -> cómo cada variable cambia la probabilidad de la marca de desertor
+#                que trae la población sintética. No hay desertores reales: la marca
+#                sale de estos supuestos, y eso se declara en el tablero.
+#
+# forma: lineal    -> efecto por unidad, alrededor de "centro"
+#        categoria -> efecto de cada categoría (las que no aparecen valen 0)
+#
+# Los efectos van en una escala latente (relaciones) o en log-odds (deserción).
+# "fuerza" es la descripción que verá el coordinador; el número es lo que usa el código.
+
+version: reglas-v1
+
+# Proporción de desertores que se busca en la población sintética.
+# Supuesto del prototipo; se puede ajustar con la tasa pública de SPADIES.
+tasa_desercion_objetivo: 0.25
+
+reglas:
+  # ---------- Cómo se generan las variables ----------
+  - id: G01
+    tipo: relacion
+    destino: semestre
+    origen: edad
+    forma: lineal
+    efecto: 0.45
+    centro: 20
+    fuerza: fuerte
+    descripcion: "Los estudiantes mayores suelen estar en semestres más altos."
+    fuente: "Correlación positiva entre edad y semestre (Rosero y Velasco, 2026); la magnitud es un supuesto."
+
+  - id: G02
+    tipo: relacion
+    destino: trabaja
+    origen: edad
+    forma: lineal
+    efecto: 0.15
+    centro: 20
+    fuerza: moderada
+    descripcion: "Los estudiantes mayores trabajan con más frecuencia."
+    fuente: "Supuesto."
+
+  - id: G03
+    tipo: relacion
+    destino: costos_afectan
+    origen: trabaja
+    forma: categoria
+    efecto: {"Sí, a tiempo parcial": 0.3, "Sí, a tiempo completo": 0.6}
+    fuerza: moderada
+    descripcion: "Quien trabaja dice con más frecuencia que los costos afectan su permanencia."
+    fuente: "Supuesto."
+
+  - id: G04
+    tipo: relacion
+    destino: costos_afectan
+    origen: apoyo_familiar
+    forma: categoria
+    efecto: {"No": 0.5}
+    fuerza: moderada
+    descripcion: "Sin apoyo de la familia, los costos afectan con más frecuencia."
+    fuente: "Supuesto."
+
+  - id: G05
+    tipo: relacion
+    destino: preocupacion_economica
+    origen: costos_afectan
+    forma: categoria
+    efecto: {"Sí": 1.2}
+    fuerza: fuerte
+    descripcion: "Si los costos afectan su permanencia, la preocupación económica es mucho más frecuente."
+    fuente: "Supuesto."
+
+  - id: G06
+    tipo: relacion
+    destino: preocupacion_economica
+    origen: trabaja
+    forma: categoria
+    efecto: {"Sí, a tiempo completo": 0.3}
+    fuerza: débil
+    descripcion: "Trabajar a tiempo completo aumenta un poco la preocupación económica."
+    fuente: "Supuesto."
+
+  - id: G07
+    tipo: relacion
+    destino: respaldo_companeros
+    origen: ambiente_favorable
+    forma: categoria
+    efecto: {"Sí": 0.8}
+    fuerza: fuerte
+    descripcion: "Con un ambiente académico favorable, el respaldo de compañeros es más frecuente."
+    fuente: "Supuesto."
+
+  - id: G08
+    tipo: relacion
+    destino: estres
+    origen: preocupacion_economica
+    forma: categoria
+    efecto: {"Sí": 0.6}
+    fuerza: moderada
+    descripcion: "La preocupación económica aumenta el estrés."
+    fuente: "Supuesto."
+
+  - id: G09
+    tipo: relacion
+    destino: estres
+    origen: respaldo_companeros
+    forma: categoria
+    efecto: {"No": 0.4}
+    fuerza: moderada
+    descripcion: "Sin respaldo de compañeros, el estrés es mayor."
+    fuente: "Supuesto."
+
+  - id: G10
+    tipo: relacion
+    destino: estres
+    origen: apoyo_familiar
+    forma: categoria
+    efecto: {"No": 0.4}
+    fuerza: moderada
+    descripcion: "Sin apoyo de la familia, el estrés es mayor."
+    fuente: "Supuesto."
+
+  - id: G11
+    tipo: relacion
+    destino: estres
+    origen: trabaja
+    forma: categoria
+    efecto: {"Sí, a tiempo completo": 0.3}
+    fuerza: débil
+    descripcion: "Trabajar a tiempo completo aumenta un poco el estrés."
+    fuente: "Supuesto."
+
+  - id: G12
+    tipo: relacion
+    destino: motivacion
+    origen: estres
+    forma: lineal
+    efecto: -0.25
+    centro: 3
+    fuerza: moderada
+    descripcion: "Más estrés, menos motivación."
+    fuente: "Supuesto."
+
+  - id: G13
+    tipo: relacion
+    destino: motivacion
+    origen: apoyo_familiar
+    forma: categoria
+    efecto: {"Sí": 0.4}
+    fuerza: moderada
+    descripcion: "El apoyo de la familia sube la motivación."
+    fuente: "Supuesto."
+
+  - id: G14
+    tipo: relacion
+    destino: motivacion
+    origen: ambiente_favorable
+    forma: categoria
+    efecto: {"Sí": 0.3}
+    fuerza: débil
+    descripcion: "Un ambiente favorable sube un poco la motivación."
+    fuente: "Supuesto."
+
+  - id: G15
+    tipo: relacion
+    destino: motivacion
+    origen: respaldo_companeros
+    forma: categoria
+    efecto: {"Sí": 0.2}
+    fuerza: débil
+    descripcion: "El respaldo de compañeros sube un poco la motivación."
+    fuente: "Supuesto."
+
+  - id: G16
+    tipo: relacion
+    destino: promedio
+    origen: motivacion
+    forma: lineal
+    efecto: 0.30
+    centro: 3
+    fuerza: moderada
+    descripcion: "Más motivación, mejor promedio."
+    fuente: "Supuesto."
+
+  - id: G17
+    tipo: relacion
+    destino: promedio
+    origen: estres
+    forma: lineal
+    efecto: -0.15
+    centro: 3
+    fuerza: débil
+    descripcion: "Más estrés, un promedio un poco menor."
+    fuente: "Supuesto."
+
+  - id: G18
+    tipo: relacion
+    destino: promedio
+    origen: trabaja
+    forma: categoria
+    efecto: {"Sí, a tiempo parcial": -0.1, "Sí, a tiempo completo": -0.4}
+    fuerza: moderada
+    descripcion: "Trabajar a tiempo completo baja el promedio; a tiempo parcial, casi nada."
+    fuente: "Supuesto."
+
+  - id: G19
+    tipo: relacion
+    destino: situacion_academica
+    origen: promedio
+    forma: lineal
+    efecto: -1.5
+    centro: 3.5
+    fuerza: fuerte
+    descripcion: "Con un promedio más bajo, la situación académica es más grave (R1 a R4)."
+    fuente: "Supuesto. La monografía relaciona las reprobaciones con la percepción del desempeño (Rosero y Velasco, 2026)."
+
+  # ---------- Hipótesis sobre la deserción ----------
+  - id: D01
+    tipo: desercion
+    destino: desertor
+    origen: promedio
+    forma: lineal
+    efecto: -0.9
+    centro: 3.5
+    fuerza: fuerte
+    descripcion: "Cada punto menos de promedio aumenta mucho la probabilidad de desertar."
+    fuente: "Supuesto. El promedio bajo es una de las 6 condiciones de riesgo de Rosero y Velasco (2026)."
+
+  - id: D02
+    tipo: desercion
+    destino: desertor
+    origen: situacion_academica
+    forma: categoria
+    efecto: {R1: 0.3, R2: 0.6, R3: 0.9, R4: 1.2}
+    fuerza: fuerte
+    descripcion: "Cuanto más grave la situación académica (R1 a R4), más probable desertar."
+    fuente: "Supuesto. La repetición de materias es una de las condiciones de riesgo de Rosero y Velasco (2026)."
+
+  - id: D03
+    tipo: desercion
+    destino: desertor
+    origen: trabaja
+    forma: categoria
+    efecto: {"Sí, a tiempo parcial": 0.2, "Sí, a tiempo completo": 0.6}
+    fuerza: moderada
+    descripcion: "Trabajar, sobre todo a tiempo completo, aumenta la probabilidad de desertar."
+    fuente: "Supuesto."
+
+  - id: D04
+    tipo: desercion
+    destino: desertor
+    origen: costos_afectan
+    forma: categoria
+    efecto: {"Sí": 0.6}
+    fuerza: moderada
+    descripcion: "Si los costos afectan su permanencia, es más probable desertar."
+    fuente: "Supuesto."
+
+  - id: D05
+    tipo: desercion
+    destino: desertor
+    origen: preocupacion_economica
+    forma: categoria
+    efecto: {"Sí": 0.2}
+    fuerza: débil
+    descripcion: "La preocupación económica aumenta un poco la probabilidad de desertar."
+    fuente: "Supuesto."
+
+  - id: D06
+    tipo: desercion
+    destino: desertor
+    origen: estres
+    forma: lineal
+    efecto: 0.2
+    centro: 3
+    fuerza: moderada
+    descripcion: "Más estrés, más probable desertar."
+    fuente: "Supuesto. El estrés alto es una de las condiciones de riesgo de Rosero y Velasco (2026)."
+
+  - id: D07
+    tipo: desercion
+    destino: desertor
+    origen: motivacion
+    forma: lineal
+    efecto: -0.35
+    centro: 3
+    fuerza: moderada
+    descripcion: "Más motivación, menos probable desertar."
+    fuente: "Supuesto."
+
+  - id: D08
+    tipo: desercion
+    destino: desertor
+    origen: respaldo_companeros
+    forma: categoria
+    efecto: {"No": 0.4}
+    fuerza: moderada
+    descripcion: "Sin respaldo de compañeros, es más probable desertar."
+    fuente: "Supuesto. Es una de las condiciones de riesgo de Rosero y Velasco (2026)."
+
+  - id: D09
+    tipo: desercion
+    destino: desertor
+    origen: apoyo_familiar
+    forma: categoria
+    efecto: {"No": 0.4}
+    fuerza: moderada
+    descripcion: "Sin apoyo emocional de la familia, es más probable desertar."
+    fuente: "Supuesto. Es una de las condiciones de riesgo de Rosero y Velasco (2026)."
+
+  - id: D10
+    tipo: desercion
+    destino: desertor
+    origen: ambiente_favorable
+    forma: categoria
+    efecto: {"No": 0.3}
+    fuerza: débil
+    descripcion: "Un ambiente desfavorable aumenta un poco la probabilidad de desertar."
+    fuente: "Supuesto. Es una de las condiciones de riesgo de Rosero y Velasco (2026)."
+
+  - id: D11
+    tipo: desercion
+    destino: desertor
+    origen: semestre
+    forma: lineal
+    efecto: -0.10
+    centro: 5
+    fuerza: débil
+    descripcion: "En los primeros semestres es más probable desertar."
+    fuente: "Supuesto."
+
+  - id: D12
+    tipo: desercion
+    destino: desertor
+    origen: sexo
+    forma: categoria
+    efecto: {Masculino: 0.1}
+    fuerza: débil
+    descripcion: "Relación débil con el sexo: casi no cambia la probabilidad."
+    fuente: "Supuesto débil. Rosero y Velasco (2026) citan que la intención de abandonar es mayor en hombres."

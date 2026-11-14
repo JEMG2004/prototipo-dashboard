@@ -1,0 +1,40 @@
+# Publicación en Fly.io (https://docs.fly.io/reference/configuration/). Los pasos están en el README.
+#
+# Una máquina de 1 GB (US$6,70 al mes si está encendida todo el tiempo) con un volumen de 1 GB (US$0,15 al mes), donde
+# se guardan la línea base, los resultados y el registro para que no se borren.
+#
+# Para la prueba, la máquina se apaga sola cuando nadie la usa y se enciende con la siguiente visita: se paga casi solo
+# el tiempo encendida. Para la herramienta del proyecto, que debe estar siempre lista, cambiar abajo:
+#   auto_stop_machines = "off"   y   min_machines_running = 1
+
+app = "simulador-permanencia"  # cámbielo por el nombre con que creó la app ("fly apps create ...")
+primary_region = "iad"        # Ashburn (Virginia, EE. UU.), la misma zona de Render
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  # La app guarda todo en el volumen y, la primera vez, copia ahí lo que precalculó al construir.
+  CARPETA_GENERADOS = "/data/generados"
+
+[mounts]
+  source = "datos"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    grace_period = "30s"
+    interval = "30s"
+    method = "GET"
+    path = "/_stcore/health"
+    timeout = "5s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"

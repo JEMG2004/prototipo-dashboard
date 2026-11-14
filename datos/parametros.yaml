@@ -1,0 +1,47 @@
+# Parámetros del prototipo. Todos se pueden cambiar sin tocar el código.
+
+poblacion:
+  n_linea_base: 1000          # tamaño de la población guardada (el real lo diría la coordinación)
+  semilla_linea_base: 2026
+  n_entrenamiento: 3000       # población aparte con la que se entrena el modelo
+  semilla_entrenamiento: 7
+
+modelo:
+  arboles: 300
+  min_muestras_hoja: 5
+  proporcion_prueba: 0.2
+  umbral_riesgo: 0.5          # probabilidad desde la que un estudiante cuenta como "en riesgo alto"
+  auc_minimo: 0.70            # por debajo, el tablero advierte que el modelo solo sirve para explorar
+
+# Lo medido en la prueba de generación (sección 7.7 del Plan): prompt de Laura,
+# modelo luna, una llamada a la vez. Sin filas reales en el prompt, cada llamada
+# debería ser más pequeña y más barata, así que la estimación es conservadora.
+llm_referencia:
+  modelo: gpt-6-luna
+  estudiantes_por_llamada: 30
+  estudiantes_por_minuto: 60
+  usd_por_1000_estudiantes: 0.16
+  tokens_salida_por_estudiante: 45
+
+# Cómo el generador simulado imita la imprecisión del LLM al regenerar un segmento.
+simulacion_llm:
+  desviacion_cobertura: 0.05  # la proporción que cambia se desvía de la meta (desviación típica)
+  ruido_numerico: 0.10        # ruido en las palancas numéricas (puntos de promedio)
+
+# Criterios PROVISIONALES para decir si un cambio es leve o importante.
+# Los debe fijar el coordinador; aquí solo sirven para probar la interfaz.
+clasificacion:
+  veces_desviacion: 2         # el cambio está "dentro del ruido" si no supera 2 desviaciones típicas entre réplicas
+  piso_ruido_relativo: 0.01   # ... o si no supera el 1 % de los desertores esperados de la línea base
+  leve_hasta: 0.10            # menos del 10 % de cambio relativo: leve
+  importante_desde: 0.30      # 30 % o más: importante; en medio: moderado
+
+# Tolerancias para comprobar que la variable de verdad cambió.
+comprobacion:
+  tolerancia_proporcion: 0.03
+  tolerancia_media: 0.10
+
+diagnostico:
+  jsd_referencia: 0.2         # criterio del trabajo de Laura: divergencia de Jensen-Shannon menor que 0,2
+  respuesta_minima_pp: 0.5    # si una palanca extrema mueve el riesgo medio menos de 0,5 puntos, se advierte
+  dosis: [0, 0.25, 0.5, 1.0, 1.5, 2.0]

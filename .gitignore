@@ -1,0 +1,19 @@
+# Lo que genera la herramienta al usarse (se vuelve a generar solo)
+datos/generados/
+# Capturas de pantalla para el Plan y las reuniones: no son código
+capturas/
+# Entorno y cachés de Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+# Secretos: la clave de la API y la de acceso nunca van en el código ni en el repositorio
+.streamlit/secrets.toml
+.env
+# Archivos del sistema y de los editores
+desktop.ini
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+*.log

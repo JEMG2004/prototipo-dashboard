@@ -1,0 +1,35 @@
+# Despliegue en Render (https://render.com/docs/blueprint-spec). Render lee este archivo con "New > Blueprint".
+#
+# Para la prueba: plan free (0,1 CPU y 512 MB). Se duerme tras 15 minutos sin visitas y lo que se guarda se borra
+# al reiniciar o dormirse.
+# Para la herramienta del proyecto: plan 0.5c-512mb (US$7 al mes; 0,5 CPU y la misma memoria), que no se duerme,
+# con un disco persistente para que no se borren la línea base, los resultados ni el registro. Las líneas para eso
+# están comentadas abajo.
+services:
+  - type: web
+    name: simulador-permanencia
+    runtime: python
+    plan: free
+    region: virginia
+    # precalcular.py genera la línea base y entrena el modelo al construir, para que la primera visita no espere.
+    buildCommand: pip install -r requirements.txt && python precalcular.py
+    startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true --server.fileWatcherType none
+    healthCheckPath: /_stcore/health
+    # Publica cada cambio de la rama main solo si pasan las pruebas de GitHub (.github/workflows/pruebas.yml).
+    autoDeployTrigger: checksPass
+    envVars:
+      # La clave que pide el tablero antes de mostrar las pantallas. Render la pregunta al crear el servicio.
+      - key: CLAVE_ACCESO
+        sync: false
+      # Las fechas del tablero en hora de Colombia, no en la del servidor (UTC).
+      - key: TZ
+        value: America/Bogota
+      # Con el plan pagado y el disco, quitar el # de estas dos líneas (la primera vez, la app copia al disco lo que
+      # precalcular.py dejó al construir):
+      # - key: CARPETA_GENERADOS
+      #   value: /var/data/generados
+    # Con el plan pagado (plan: 0.5c-512mb), quitar el # de estas cuatro líneas:
+    # disk:
+    #   name: datos
+    #   mountPath: /var/data
+    #   sizeGB: 1

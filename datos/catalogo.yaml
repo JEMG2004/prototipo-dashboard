@@ -1,0 +1,228 @@
+# Catálogo de variables del prototipo (sección 7.4 del Plan).
+#
+# De aquí salen el formulario del escenario, el diccionario del prompt y las
+# validaciones. Las variables se tomaron de la Tabla 12 y del formulario de
+# Rosero y Velasco (2026): se usan los campos, nunca las respuestas.
+#
+# Las distribuciones de referencia son SUPUESTOS del prototipo, salvo donde
+# "fuente_referencia" cita una cifra publicada en la monografía. La monografía
+# no trae el porcentaje de cada respuesta, así que casi todo es supuesto y así
+# se muestra en el tablero. Se cambian aquí, sin tocar el código.
+#
+# Tipos:
+#   binaria     -> dos categorías, en orden ["No", Sí]
+#   ordinal     -> valores enteros ordenados (escalas de 1 a 5, semestre)
+#   categorica  -> categorías; "ordenada: true" si tienen orden
+#   numerica    -> número con "rango" y "decimales"; la referencia va por intervalos
+
+version: catalogo-v1
+
+variables:
+  - nombre: sexo
+    etiqueta: Sexo
+    pregunta: "Sexo"
+    factor_men: Individual
+    categoria_tabla12: Demográficas
+    tipo: categorica
+    valores: [Masculino, Femenino, Otro, Prefiero no decirlo]
+    referencia: {Masculino: 0.70, Femenino: 0.27, Otro: 0.01, Prefiero no decirlo: 0.02}
+    fuente_referencia: "Predominio masculino (Rosero y Velasco, 2026). Las proporciones son un supuesto."
+    palanca: false
+    uso: Segmento
+
+  - nombre: edad
+    etiqueta: Edad
+    pregunta: "Edad"
+    factor_men: Individual
+    categoria_tabla12: Demográficas
+    tipo: numerica
+    rango: [16, 35]
+    decimales: 0
+    intervalos:
+      - {desde: 16, hasta: 17, proporcion: 0.06}
+      - {desde: 18, hasta: 22, proporcion: 0.70}
+      - {desde: 23, hasta: 26, proporcion: 0.17}
+      - {desde: 27, hasta: 35, proporcion: 0.07}
+    fuente_referencia: "Concentrada entre 18 y 22 años, con asimetría positiva (Rosero y Velasco, 2026). Las proporciones son un supuesto."
+    palanca: false
+    uso: Segmento
+
+  - nombre: semestre
+    etiqueta: Semestre actual
+    pregunta: "Semestre actual"
+    factor_men: Académico
+    categoria_tabla12: Académicas
+    tipo: ordinal
+    valores: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    referencia: {1: 0.14, 2: 0.13, 3: 0.12, 4: 0.11, 5: 0.10, 6: 0.10, 7: 0.09, 8: 0.08, 9: 0.07, 10: 0.06}
+    fuente_referencia: "Supuesto. La monografía reporta una correlación positiva entre edad y semestre (Rosero y Velasco, 2026)."
+    palanca: false
+    uso: Segmento
+
+  - nombre: trabaja
+    etiqueta: Trabaja mientras estudia
+    pregunta: "¿Trabajas mientras estudias?"
+    factor_men: Socioeconómico
+    categoria_tabla12: Socioeconómicas
+    tipo: categorica
+    ordenada: true
+    valores: ["No", "Sí, a tiempo parcial", "Sí, a tiempo completo"]
+    referencia: {"No": 0.62, "Sí, a tiempo parcial": 0.28, "Sí, a tiempo completo": 0.10}
+    fuente_referencia: "Supuesto."
+    palanca: false
+    uso: "Segmento, o palanca indirecta (apoyo económico)"
+    nota: "La Tabla 12 la clasifica como Sí/No; el formulario distingue tiempo parcial y completo."
+
+  - nombre: apoyo_familiar
+    etiqueta: Apoyo emocional de la familia
+    pregunta: "Recibo apoyo emocional de mi familia para continuar mis estudios."
+    factor_men: Individual
+    categoria_tabla12: Sociológicas
+    tipo: binaria
+    valores: ["No", Sí]
+    referencia: {"No": 0.15, Sí: 0.85}
+    fuente_referencia: "Supuesto."
+    palanca: false
+    uso: "Contexto; no es palanca de la universidad"
+
+  - nombre: ambiente_favorable
+    etiqueta: Ambiente académico favorable
+    pregunta: "Percibo que el ambiente académico de la universidad es favorable."
+    factor_men: Institucional
+    categoria_tabla12: Sociológicas
+    tipo: binaria
+    valores: ["No", Sí]
+    referencia: {"No": 0.30, Sí: 0.70}
+    fuente_referencia: "Supuesto."
+    palanca: false
+    uso: "Contexto"
+
+  - nombre: costos_afectan
+    etiqueta: Los costos afectan su permanencia
+    pregunta: "Considero que los costos de matrícula y otros gastos afectan mi permanencia en la universidad."
+    factor_men: Socioeconómico
+    categoria_tabla12: Socioeconómicas
+    tipo: binaria
+    valores: ["No", Sí]
+    referencia: {"No": 0.50, Sí: 0.50}
+    fuente_referencia: "Supuesto."
+    palanca: true
+    uso: "Palanca (apoyo económico)"
+
+  - nombre: preocupacion_economica
+    etiqueta: Preocupación económica
+    pregunta: "Mi situación económica me genera preocupaciones que afectan mi rendimiento académico."
+    factor_men: Socioeconómico
+    categoria_tabla12: Socioeconómicas
+    tipo: binaria
+    valores: ["No", Sí]
+    referencia: {"No": 0.55, Sí: 0.45}
+    fuente_referencia: "Supuesto."
+    palanca: false
+    uso: "Contexto (cambia junto con los costos)"
+
+  - nombre: respaldo_companeros
+    etiqueta: Respaldo de compañeros
+    pregunta: "Me siento respaldado/a por mis compañeros en el proceso de aprendizaje."
+    factor_men: Individual
+    categoria_tabla12: Sociológicas
+    tipo: binaria
+    valores: ["No", Sí]
+    referencia: {"No": 0.28, Sí: 0.72}
+    fuente_referencia: "Supuesto."
+    palanca: true
+    uso: "Palanca (integración, mentorías)"
+
+  - nombre: estres
+    etiqueta: El estrés afecta su rendimiento
+    pregunta: "Siento que mi nivel de estrés o ansiedad afecta mi rendimiento académico. (1 = nada de acuerdo, 5 = muy de acuerdo)"
+    factor_men: Individual
+    categoria_tabla12: Psicológicas
+    tipo: ordinal
+    valores: [1, 2, 3, 4, 5]
+    referencia: {1: 0.08, 2: 0.15, 3: 0.27, 4: 0.28, 5: 0.22}
+    fuente_referencia: "Supuesto."
+    palanca: true
+    uso: "Palanca (apoyo psicosocial)"
+
+  - nombre: motivacion
+    etiqueta: Motivación por sus objetivos
+    pregunta: "Me siento motivado/a para alcanzar mis objetivos académicos. (1 = nada de acuerdo, 5 = muy de acuerdo)"
+    factor_men: Individual
+    categoria_tabla12: Psicológicas
+    tipo: ordinal
+    valores: [1, 2, 3, 4, 5]
+    referencia: {1: 0.04, 2: 0.08, 3: 0.22, 4: 0.36, 5: 0.30}
+    fuente_referencia: "Supuesto."
+    palanca: false
+    uso: "Contexto (cambia junto con el estrés y el apoyo)"
+
+  - nombre: promedio
+    etiqueta: Promedio de la carrera
+    pregunta: "Promedio de la carrera"
+    factor_men: Académico
+    categoria_tabla12: Académicas
+    tipo: numerica
+    rango: [0.0, 5.0]
+    decimales: 1
+    intervalos:
+      - {desde: 0.0, hasta: 2.9, proporcion: 0.22}
+      - {desde: 3.0, hasta: 3.9, proporcion: 0.58}
+      - {desde: 4.0, hasta: 5.0, proporcion: 0.20}
+    # Forma de la distribución dentro de cada rango (supuesto): pares [cuantil, valor].
+    # Deben respetar los cortes de los intervalos: 22 % por debajo de 2,95 y 80 % por debajo de 3,95.
+    cuantiles: [[0.0, 1.2], [0.05, 2.0], [0.22, 2.949], [0.80, 3.949], [0.97, 4.6], [1.0, 5.0]]
+    fuente_referencia: "El 78 % tiene un promedio entre 3,0 y 5,0 (Rosero y Velasco, 2026). El reparto entre 3,0–3,9 y 4,0–5,0 es un supuesto."
+    palanca: true
+    uso: "Palanca (tutorías); ver pregunta 4"
+    nota: "En la encuesta es categórica (3 rangos). Aquí se genera como número para poder aplicar cambios como «subir el promedio un 10 %»."
+
+  - nombre: situacion_academica
+    etiqueta: Situación académica
+    pregunta: "¿Has estado alguna vez en alguna de las siguientes situaciones académicas? (R1 a R4)"
+    factor_men: Académico
+    categoria_tabla12: Académicas
+    tipo: categorica
+    ordenada: true
+    valores: [Ninguna, R1, R2, R3, R4]
+    referencia: {Ninguna: 0.55, R1: 0.20, R2: 0.12, R3: 0.08, R4: 0.05}
+    fuente_referencia: "Supuesto."
+    palanca: true
+    uso: "Palanca (acompañamiento académico)"
+    nota: "En la encuesta es de selección múltiple; aquí se guarda la situación más alta."
+
+# ---------------------------------------------------------------------------
+# Por qué estas variables y no otras (se muestra en la pantalla Supuestos).
+# Es documentación: cambiar estos textos no obliga a regenerar la línea base.
+# ---------------------------------------------------------------------------
+criterios_seleccion:
+  - "Están las seis condiciones con que Rosero y Velasco (2026) definen el riesgo: promedio, estrés, apoyo emocional de la familia, respaldo de compañeros, ambiente académico y materias repetidas (aquí, la situación académica R1 a R4)."
+  - "Están las variables que mueven las políticas de ejemplo (las palancas): promedio, situación académica, costos, estrés y respaldo de compañeros."
+  - "Están las que sirven para elegir a quién va una política (el segmento): sexo, edad, semestre y si trabaja."
+  - "Están las que conectan una palanca con la deserción: la preocupación económica (entre los costos y el estrés) y la motivación (entre el estrés y el promedio)."
+  - "Hay al menos una de cada factor de la guía del MEN: individual, académico, socioeconómico e institucional."
+  - "El conjunto es pequeño a propósito: cada variable alarga el prompt (más tokens), necesita una distribución de referencia que la monografía no publica (otro supuesto más) y suma reglas que revisar con el coordinador. Agregar una es editar datos/catalogo.yaml; la lista final se decide con el coordinador (PT 1.2)."
+
+# Las otras 21 variables que describe la Tabla 12 de la monografía (son 34 en total) y por qué no entraron.
+no_incluidas:
+  - {variable: "Materias involucradas en repetición", categoria: Académicas, motivo: "Texto libre: no se puede generar ni usar como variable del modelo. Sirve para el análisis cualitativo."}
+  - {variable: "Motivos de repetición: otras razones", categoria: Académicas, motivo: "Texto libre."}
+  - {variable: "Tipo de apoyo financiero", categoria: Socioeconómicas, motivo: "Texto libre."}
+  - {variable: "Aspectos familiares o sociales influyentes", categoria: Sociológicas, motivo: "Texto libre."}
+  - {variable: "Mejoras que propondrías", categoria: Organizacionales, motivo: "Texto libre."}
+  - {variable: "Experiencias con mayor impacto", categoria: Interaccionistas, motivo: "Texto libre."}
+  - {variable: "Otros factores importantes", categoria: Comentarios finales, motivo: "Texto libre."}
+  - {variable: "Año en curso de la carrera", categoria: Académicas, motivo: "Repite lo que dice el semestre actual."}
+  - {variable: "Motivos principales de repetición", categoria: Académicas, motivo: "Detalle de la situación académica. Candidata si el coordinador quiere políticas según la causa de la repetición."}
+  - {variable: "Nivel educativo de los padres influyó", categoria: Socioeconómicas, motivo: "Ninguna política de la universidad la cambia. Candidata para definir segmentos."}
+  - {variable: "Confianza en sus habilidades (autoeficacia)", categoria: Psicológicas, motivo: "Muy cercana a la motivación: con las dos, el modelo se repartiría el mismo efecto. Candidata si una política apunta a ella."}
+  - {variable: "Persistencia para terminar la carrera", categoria: Psicológicas, motivo: "Muy cercana a la motivación."}
+  - {variable: "Estrategias para manejar el estrés", categoria: Psicológicas, motivo: "Detalle del estrés, con muchas opciones."}
+  - {variable: "Horas de sueño promedio", categoria: Psicológicas, motivo: "Ninguna política de ejemplo la usa. Candidata."}
+  - {variable: "Elección de carrera (propia o impuesta)", categoria: Sociológicas, motivo: "Ninguna política del programa la cambia. Candidata para definir segmentos."}
+  - {variable: "La universidad brinda el apoyo necesario", categoria: Organizacionales, motivo: "Percepción institucional; el ambiente académico representa ese factor. Candidata para políticas de bienestar."}
+  - {variable: "Calidad de la enseñanza adecuada", categoria: Organizacionales, motivo: "Igual que la anterior. Candidata para políticas sobre la docencia."}
+  - {variable: "Suficientes recursos disponibles", categoria: Organizacionales, motivo: "Igual que la anterior. Candidata para políticas de recursos."}
+  - {variable: "Adaptación al entorno académico y social", categoria: Interaccionistas, motivo: "Cercana al respaldo de compañeros y al ambiente. Candidata para políticas de inducción."}
+  - {variable: "Desempeño afectado por la relación con la universidad", categoria: Interaccionistas, motivo: "Percepción institucional que ninguna política de ejemplo usa."}
+  - {variable: "Las experiencias vividas influyen en la decisión de seguir", categoria: Interaccionistas, motivo: "Es casi la intención de desertar, que es lo que se quiere estimar: usarla como entrada mezclaría causa y resultado."}
