@@ -1,0 +1,27 @@
+{% include "_fijas.j2" %}
+
+## Tarea
+Vuelve a generar el segmento «{{ segmento }}» ({{ n_segmento }} estudiantes), por lotes de {{ n_lote }}. Es un escenario de la política «{{ politica }}». No generes la marca de desertor: el riesgo lo estima el modelo.
+
+## Lo que cambia la política (metas para el segmento)
+{% for m in metas %}
+- {{ m }}
+{% endfor %}
+
+## Lo que se conserva (proporciones del segmento en la línea base)
+{% for c in contexto %}
+- {{ c }}
+{% endfor %}
+{% if regeneradas %}
+
+## Variables que se generan de nuevo, coherentes con el cambio
+{{ regeneradas | join(", ") }}. Sigue estas relaciones:
+{% for r in relaciones %}
+- {{ r }}
+{% endfor %}
+{% endif %}
+
+## Relaciones débiles: no las exageres
+{% for r in debiles %}
+- {{ r }}
+{% endfor %}

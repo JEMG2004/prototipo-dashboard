@@ -1,0 +1,19 @@
+{% include "_fijas.j2" %}
+
+## Tarea
+Genera un lote de {{ n_lote }} estudiantes. Alrededor del {{ tasa }} % deben ser desertores (desertor = "Sí").
+
+## Cómo se reparte cada variable en desertores y no desertores
+{% for d in distribuciones %}
+- {{ d.etiqueta }}. Desertores: {{ d.desertores }}. No desertores: {{ d.no_desertores }}.
+{% endfor %}
+
+## Relaciones entre variables (tendencias)
+{% for r in relaciones %}
+- {{ r }}
+{% endfor %}
+
+## Relaciones débiles: no las exageres
+{% for r in debiles %}
+- {{ r }}
+{% endfor %}

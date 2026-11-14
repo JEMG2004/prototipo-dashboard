@@ -1,0 +1,7 @@
+# Git guarda los archivos de texto con finales de línea LF y en Windows los entrega con CRLF.
+# Así un archivo no aparece como cambiado solo por abrirlo en otro sistema.
+* text=auto
+# Estos se guardan tal cual: no son texto.
+*.png binary
+*.jpg binary
+*.joblib binary
